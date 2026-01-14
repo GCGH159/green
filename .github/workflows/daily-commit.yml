@@ -1,0 +1,32 @@
+name: Daily Green Commit
+
+on:
+  schedule:
+    # UTC 时间，每天 0:00 ~ 23:00 随机选一个（这里是 UTC 14:30 ≈ 北京/香港 22:30）
+    - cron: '30 14 * * *'
+  workflow_dispatch:   # 允许手动触发
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Make a commit
+        run: |
+          git config user.name  "GCGH159"
+          git config user.email "2932582566@QQ.com"
+          
+          # 每天生成一点不一样的变化
+          echo "$(date '+%Y-%m-%d %H:%M:%S') - auto commit" >> auto-log.md
+          echo "Commit count: $(( $(wc -l < auto-log.md) ))" >> auto-log.md
+          
+          git add auto-log.md
+          git commit -m "chore: daily auto update $(date '+%Y-%m-%d')"
+          git push

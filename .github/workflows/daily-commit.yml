@@ -3,7 +3,7 @@ name: Daily Green Commit
 on:
   schedule:
     # UTC 时间，每天 0:00 ~ 23:00 随机选一个（这里是 UTC 14:30 ≈ 北京/香港 22:30）
-    - cron: '30 14 * * *'
+    - cron: '0 0-23/4 * * *'   # 每4小时一次：0:00, 4:00, 8:00, 12:00, 16:00, 20:00
   workflow_dispatch:   # 允许手动触发
 
 jobs:

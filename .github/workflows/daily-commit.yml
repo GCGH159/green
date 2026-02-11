@@ -8,6 +8,7 @@ on:
 jobs:
   commit:
     runs-on: ubuntu-latest
+
     env:
       TZ: Asia/Shanghai
 
@@ -17,33 +18,42 @@ jobs:
         with:
           token: ${{ secrets.GCGH159 }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Make a commit
+      - name: Git config
         run: |
           git config user.name  "GCGH159"
           git config user.email "2932582566@QQ.com"
 
-
+      - name: Commit 1 - 主日志
+        run: |
           TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
-
           echo "$TIMESTAMP - auto commit" >> auto-log.md
           echo "Commit count: $(( $(wc -l < auto-log.md 2>/dev/null || echo 0) ))" >> auto-log.md
+          git add auto-log.md
+          git commit -m "📝 log update $TIMESTAMP"
+          git push
 
-
+      - name: Commit 2 - 月度归档
+        run: |
+          TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
           mkdir -p logs
           echo "$TIMESTAMP" >> "logs/log-$(date '+%Y-%m').md"
+          git add logs/
+          git commit -m "📂 archive update $TIMESTAMP"
+          git push
 
+      - name: Commit 3 - 统计信息
+        run: |
+          TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
           echo "Last update: $TIMESTAMP" > stats.txt
           echo "Total commits: $(git rev-list --count HEAD 2>/dev/null || echo 0)" >> stats.txt
+          git add stats.txt
+          git commit -m "📊 stats update $TIMESTAMP"
+          git push
 
-
-          echo "Random: $RANDOM" >> data.txt
-
-
-          git add auto-log.md logs/ stats.txt data.txt
-          git commit -m "chore: daily auto update $(date '+%Y-%m-%d %H:%M')"
+      - name: Commit 4 - 随机数据
+        run: |
+          TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
+          echo "$RANDOM - $TIMESTAMP" >> data.txt
+          git add data.txt
+          git commit -m "🎲 data update $TIMESTAMP"
           git push

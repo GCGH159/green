@@ -8,6 +8,9 @@ on:
 jobs:
   commit:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,26 +26,24 @@ jobs:
         run: |
           git config user.name  "GCGH159"
           git config user.email "2932582566@QQ.com"
-          
-          # 创建或更新多个文件
+
+
           TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
-          
-          # 文件1：主日志
+
           echo "$TIMESTAMP - auto commit" >> auto-log.md
           echo "Commit count: $(( $(wc -l < auto-log.md 2>/dev/null || echo 0) ))" >> auto-log.md
-          
-          # 文件2：按日期归档
+
+
           mkdir -p logs
           echo "$TIMESTAMP" >> "logs/log-$(date '+%Y-%m').md"
-          
-          # 文件3：统计信息
+
           echo "Last update: $TIMESTAMP" > stats.txt
           echo "Total commits: $(git rev-list --count HEAD 2>/dev/null || echo 0)" >> stats.txt
-          
-          # 文件4：随机数据（让每次更独特）
+
+
           echo "Random: $RANDOM" >> data.txt
-          
-          # 一次性提交所有更改
+
+
           git add auto-log.md logs/ stats.txt data.txt
-          git commit -m "chore: daily auto update $(date '+%Y-%m-%d')"
+          git commit -m "chore: daily auto update $(date '+%Y-%m-%d %H:%M')"
           git push
